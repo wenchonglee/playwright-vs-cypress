@@ -33,12 +33,13 @@ The Cypress app had more time in the oven, but Playwright's VSCode extension is 
 In this repository, some of Cypress's [kitchen sink test suites](https://github.com/cypress-io/cypress-example-kitchensink/tree/master/cypress/e2e) were migrated to Playwright. _Even though they were written for Playwright, the titles were kept in sync for easy comparison._  
 I'll use these selected test suites for discussion points:
 
-| Test suite                     | Cypress                                                           | Playwright                                                       |
-| ------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `1-getting-started/todo`       | [cypress/todo](cypress/e2e/1-getting-started/todo.cy.js)          | [playwright/todo](tests/1-getting-started/todo.spec.ts)          |
-| `2-advanced-examples/actions`  | [cypress/actions](cypress/e2e/2-advanced-examples/actions.cy.js)  | [playwright/actions](tests/2-advanced-examples/actions.spec.ts)  |
-| `2-advanced-examples/aliasing` | [cypress/actions](cypress/e2e/2-advanced-examples/aliasing.cy.js) | [playwright/actions](tests/2-advanced-examples/aliasing.spec.ts) |
-| `2-advanced-examples/cookies`  | [cypress/actions](cypress/e2e/2-advanced-examples/cookies.cy.js)  | [playwright/actions](tests/2-advanced-examples/cookies.spec.ts)  |
+| Cypress                                                                    | Playwright                                                             |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [todo](cypress/e2e/1-getting-started/todo.cy.js)                           | [todo](tests/1-getting-started/todo.spec.ts)                           |
+| [actions](cypress/e2e/2-advanced-examples/actions.cy.js)                   | [actions](tests/2-advanced-examples/actions.spec.ts)                   |
+| [aliasing](cypress/e2e/2-advanced-examples/aliasing.cy.js)                 | [aliasing](tests/2-advanced-examples/aliasing.spec.ts)                 |
+| [cookies](cypress/e2e/2-advanced-examples/cookies.cy.js)                   | [cookies](tests/2-advanced-examples/cookies.spec.ts)                   |
+| [network_requests](cypress/e2e/2-advanced-examples/network_requests.cy.js) | [network_requests](tests/2-advanced-examples/network_requests.spec.ts) |
 
 Note that it is definitely **not** an apples-to-apples comparison, there are some minor differences that might give an edge to 1 tool over the other.  
 I've tried to tweak it as much as possible to not affect the overall outcome of the test suites.
@@ -52,14 +53,14 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
 - "w/ startup" means total run time after the test command is executed
 - "w/o startup" means the total test time reported by Cypress/Playwright
 
-| Runs                                    | All 29 tests |
+| Runs                                    | All 35 tests |
 | --------------------------------------- | ------------ |
-| Cypress run (w/ startup)                | 33.8s        |
-| Cypress run (w/o startup)               | 22.0s        |
-| Playwright (single worker, w/ startup)  | 16.8s        |
-| Playwright (single worker, w/o startup) | 16.1s        |
-| Playwright (6 workers, w/ startup)      | 5.8s         |
-| Playwright (6 workers, w/o startup)     | 5.1s         |
+| Cypress run (w/ startup)                | 43.5s        |
+| Cypress run (w/o startup)               | 35.0s        |
+| Playwright (single worker, w/ startup)  | 25.8s        |
+| Playwright (single worker, w/o startup) | 25.1s        |
+| Playwright (6 workers, w/ startup)      | 6.9s         |
+| Playwright (6 workers, w/o startup)     | 6.3s         |
 
 ![playwright](playwright-logo.svg) Playwright is the better option when writing tests locally
 
