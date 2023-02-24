@@ -25,7 +25,7 @@ test.describe("Actions", () => {
     await page.locator(".action-email").type("slow.typing@email.com", { delay: 100 });
     await expect(page.locator(".action-email")).toHaveValue("slow.typing@email.com");
 
-    // ! cannot force type in a disabled field
+    // * Playwright cannot force type in a disabled field
     // await page.locator(".action-disabled").type("disabled error checking");
   });
 
@@ -33,7 +33,7 @@ test.describe("Actions", () => {
     await page.locator(".action-focus").focus();
     await expect(page.locator(".action-focus")).toHaveClass(/focus/);
 
-    // ! no .prev to select sibling
+    // * Playwright has no .prev to select sibling
     await expect(page.locator(".action-focus").locator("..").locator("label")).toHaveAttribute(
       "style",
       "color: orange;"
@@ -43,6 +43,7 @@ test.describe("Actions", () => {
   test(".blur() - blur off a DOM element", async ({ page }) => {
     await page.locator(".action-blur").type("About to blur");
     await page.locator(".action-blur").blur();
+
     await expect(page.locator(".action-blur")).toHaveClass(/error/);
     await expect(page.locator(".action-blur").locator("..").locator("label")).toHaveAttribute("style", "color: red;");
   });
@@ -58,7 +59,7 @@ test.describe("Actions", () => {
   test(".submit() - submit a form", async ({ page }) => {
     await page.locator(".action-form").locator("[type='text']").type("HALFOFF");
 
-    // ! no submit(), no next()
+    // * Playwright has no submit() and no next()
     await page.locator(".action-form").getByRole("button", { name: "Submit" }).click();
     await expect(page.locator(".action-form + p")).toHaveText("Your form has been submitted!");
   });
@@ -66,8 +67,8 @@ test.describe("Actions", () => {
   test(".click() - click on a DOM element", async ({ page }) => {
     await page.locator(".action-btn").click();
 
-    // ! playwright doesnt have predefined positions
-    // ! to emulate the test going through the same steps, the clicks are looped twice
+    // * Playwright doesnt have predefined positions
+    // to emulate the test going through the same steps, the clicks are looped twice
     for (let i = 0; i < 2; i++) {
       await page.locator("#action-canvas").click();
       await page.locator("#action-canvas").click({ position: { x: 80, y: 75 + i * 10 } });
@@ -79,12 +80,12 @@ test.describe("Actions", () => {
       await page.locator("#action-canvas").click({ position: { x: 170, y: 165 + i * 10 } });
     }
 
-    // ! playwright doesnt have click({multiple: true})
+    // * Playwright doesnt have click({ multiple: true })
     for (const label of await page.locator(".action-labels>.label").all()) {
       await label.click();
     }
 
-    // ! playwright's force click doesn't work the same as cypress
+    // * Playwright's force click doesn't work the same as cypress, but you can still bypass it with dispatchEvent
     await page.locator(".action-opacity>.btn").dispatchEvent("click");
   });
 
@@ -103,8 +104,8 @@ test.describe("Actions", () => {
   });
 
   test(".check() - check a checkbox or radio element", async ({ page }) => {
-    // ! playwright doesn't have a disabled filter and will not check all
-    // * you can use a css filter or do it programatiically with playwright
+    // * Playwright doesn't have a disabled filter and will not check all
+    // you can use a css filter or do it programmatically
     // for (const checkbox of await page.locator(".action-checkboxes [type='checkbox']:not([disabled])").all()) {
     //   await checkbox.check();
     // }
@@ -121,19 +122,19 @@ test.describe("Actions", () => {
       await expect(radio).toBeChecked();
     }
 
-    // ! playwright check() doesn't accept values
+    // * Playwright check() doesn't accept values
     // this radio step locates by the label
     await page.getByRole("radio", { name: /Radio one has value "radio1"/ }).check();
     await expect(page.getByRole("radio", { name: /Radio one has value "radio1"/ })).toBeChecked();
 
-    // this checkbox step locates by css selector
+    // the alternative is to locate by css selector
     await page.locator(".action-multiple-checkboxes [type='checkbox'][value='checkbox1']").check();
     await page.locator(".action-multiple-checkboxes [type='checkbox'][value='checkbox2']").check();
 
     await expect(page.locator(".action-multiple-checkboxes [type='checkbox'][value='checkbox1']")).toBeChecked();
     await expect(page.locator(".action-multiple-checkboxes [type='checkbox'][value='checkbox2']")).toBeChecked();
 
-    // ! cannot force check in a disabled field
+    // * Playwright cannot force check in a disabled field
     // await page.locator(".action-checkboxes [disabled]").check({ force: true });
     // await expect(page.locator(".action-checkboxes [disabled]")).toBeChecked();
 
@@ -164,7 +165,7 @@ test.describe("Actions", () => {
     await expect(page.locator(".action-check [type='checkbox'][value='checkbox1']")).not.toBeChecked();
     await expect(page.locator(".action-check [type='checkbox'][value='checkbox3']")).not.toBeChecked();
 
-    // ! cannot force check in a disabled field
+    // * Playwright cannot force check in a disabled field
     //     cy.get(".action-check [disabled]").uncheck({ force: true }).should("not.be.checked");
   });
 
@@ -176,7 +177,7 @@ test.describe("Actions", () => {
     await page.locator(".action-select-multiple").selectOption(["apples", "oranges", "bananas"]);
     await expect(page.locator(".action-select-multiple")).toHaveValues(["fr-apples", "fr-oranges", "fr-bananas"]);
 
-    // ! couldn't figure out how to use evaluate to do this assertion
+    // * I couldn't figure out how to use evaluate to do this assertion
     //     cy.get(".action-select-multiple").invoke("val").should("include", "fr-oranges");
 
     // this snippet yields undefined values even though it works in browser
@@ -201,6 +202,7 @@ test.describe("Actions", () => {
   test(".trigger() - trigger an event on a DOM element", async ({ page }) => {
     await page.locator(".trigger-input-range").evaluate((node: HTMLInputElement) => (node.value = "25"));
     await page.locator(".trigger-input-range").dispatchEvent("change");
+
     await expect(page.locator(".trigger-input-range + p")).toHaveText("25");
   });
 
@@ -221,7 +223,7 @@ test.describe("Actions", () => {
       })
     );
 
-    // ! no way to change duration
+    // * Playwright has no scroll API and then native scrollTo has no way to change duration
     await page.locator("#scrollable-both").evaluate((node) =>
       node.scrollTo({
         behavior: "smooth",
