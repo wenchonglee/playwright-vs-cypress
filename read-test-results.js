@@ -12,10 +12,10 @@ if (args[2] === "playwright") {
 }
 
 if (args[2] === "cypress") {
-  fs.readFile("/cy-results", "utf8", function (err, data) {
-    if (err) throw err;
-    const matches = [...data.matchAll(/All specs passed.*00:(\d\d)/g)];
-    const match = matches[0][1];
-    exec(`echo "CYPRESS_TIME_TAKEN=${match}.0" >> $GITHUB_OUTPUT`);
-  });
+  // fs.readFile("/cy-results", "utf8", function (err, data) {
+  //   if (err) throw err;
+  //   const matches = [...data.matchAll(/All specs passed.*00:(\d\d)/g)];
+  //   const match = matches[0][1];
+  //   exec(`echo "CYPRESS_TIME_TAKEN=${match}.0" >> $GITHUB_OUTPUT`);
+  // });
 }
