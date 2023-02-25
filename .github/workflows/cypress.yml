@@ -5,13 +5,13 @@ on:
   pull_request:
     branches: [main, master]
 jobs:
-  basic-ubuntu-22:
-    runs-on: ubuntu-22.04
+  cypress-run:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cypress tests
-        uses: ./
+      - name: Cypress run
+        uses: cypress-io/github-action@v5.0.9 # use the explicit version number
         with:
-          working-directory: examples/basic
-          build: npx cypress info
+          build: npm run build
+          start: npm start
