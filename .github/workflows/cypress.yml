@@ -13,7 +13,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5.0.9
         with:
-          command: yarn cy > cy-results
+          command: yarn cy > /cy-results
       - name: Store time taken
         id: store-time-taken-cy
         run: node read-test-results.js cypress
