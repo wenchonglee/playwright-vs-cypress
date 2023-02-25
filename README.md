@@ -71,8 +71,10 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
   - e.g. test-runner-1 takes 2 long tests, test-runner-2 takes 4 shorter tests
   - With the more naive approach in Playwright, it'll be cleanly divided where each runner take 3 tests
 
+**All tests**  
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-6.json)  
-![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-1.json)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-1.json)  
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/cy.json)
 
 <!-- | Runs                                               | All tests |
 | -------------------------------------------------- | --------- |
