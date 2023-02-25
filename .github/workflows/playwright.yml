@@ -19,6 +19,17 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
+      - name: Store time taken
+        id: store-time-taken
+        run: node read-test.js
+      - uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 6d4aa86c65259c0b1e1d61d644c88c84
+          filename: test.json
+          label: Playwright time taken
+          message: ${{ steps.store-time-taken.outputs.PLAYWRIGHT_TIME_TAKEN }}
+          color: black
       - uses: actions/upload-artifact@v3
         if: always()
         with:

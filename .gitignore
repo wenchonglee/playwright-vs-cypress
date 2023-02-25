@@ -9,3 +9,7 @@ screenshots/
 e2e-todo
 
 .next
+
+results.xml
+test-results.json
+$GITHUB_OUTPUT
