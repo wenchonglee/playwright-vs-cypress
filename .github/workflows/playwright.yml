@@ -17,6 +17,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+      - name: Cold start
+        run: yarn pw:1
       - name: Run Playwright tests (6 workers)
         run: yarn pw:6
       - name: Store time taken (6 workers)
