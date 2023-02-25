@@ -23,7 +23,7 @@ jobs:
         run: yarn pw:6
       - name: Store time taken (6 workers)
         id: store-time-taken-6w
-        run: node read-test.js
+        run: node read-test-results.js playwright
       - uses: schneegans/dynamic-badges-action@v1.6.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
@@ -36,7 +36,7 @@ jobs:
         run: yarn pw:1
       - name: Store time taken (1 worker)
         id: store-time-taken-1w
-        run: node read-test.js
+        run: node read-test-results.js playwright
       - uses: schneegans/dynamic-badges-action@v1.6.0
         with:
           auth: ${{ secrets.GIST_SECRET }}

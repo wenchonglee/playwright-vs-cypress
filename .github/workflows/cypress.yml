@@ -1,4 +1,4 @@
-name: example-basic
+name: Cypress Tests
 on:
   push:
     branches: [main, master]
@@ -12,3 +12,16 @@ jobs:
         uses: actions/checkout@v3
       - name: Cypress run
         uses: cypress-io/github-action@v5.0.9
+        with:
+          command: yarn cy > cy-results
+      - name: Store time taken
+        id: store-time-taken-cy
+        run: node read-test-results.js cypress
+      - uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 6d4aa86c65259c0b1e1d61d644c88c84
+          filename: cy.json
+          label: Cypress (w/o startup)
+          message: ${{ steps.store-time-taken-cy.outputs.CYPRESS_TIME_TAKEN }}
+          color: blue
