@@ -17,8 +17,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Run Playwright tests (6 workers)
+        run: yarn pw:6
       - name: Store time taken
         id: store-time-taken
         run: node read-test.js
@@ -26,13 +26,20 @@ jobs:
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 6d4aa86c65259c0b1e1d61d644c88c84
-          filename: test.json
-          label: Playwright time taken
+          filename: pw-6.json
+          label: Playwright (6 workers, w/o startup)
           message: ${{ steps.store-time-taken.outputs.PLAYWRIGHT_TIME_TAKEN }}
-          color: black
-      - uses: actions/upload-artifact@v3
-        if: always()
+          color: brightgreen
+      - name: Run Playwright tests (1 worker)
+        run: yarn pw:1
+      - name: Store time taken
+        id: store-time-taken
+        run: node read-test.js
+      - uses: schneegans/dynamic-badges-action@v1.6.0
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 6d4aa86c65259c0b1e1d61d644c88c84
+          filename: pw-1.json
+          label: Playwright (1 worker, w/o startup)
+          message: ${{ steps.store-time-taken.outputs.PLAYWRIGHT_TIME_TAKEN }}
+          color: green
