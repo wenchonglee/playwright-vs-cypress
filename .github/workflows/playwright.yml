@@ -19,8 +19,8 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests (6 workers)
         run: yarn pw:6
-      - name: Store time taken
-        id: store-time-taken
+      - name: Store time taken (6 workers)
+        id: store-time-taken-6w
         run: node read-test.js
       - uses: schneegans/dynamic-badges-action@v1.6.0
         with:
@@ -28,12 +28,12 @@ jobs:
           gistID: 6d4aa86c65259c0b1e1d61d644c88c84
           filename: pw-6.json
           label: Playwright (6 workers, w/o startup)
-          message: ${{ steps.store-time-taken.outputs.PLAYWRIGHT_TIME_TAKEN }}
+          message: ${{ steps.store-time-taken-6w.outputs.PLAYWRIGHT_TIME_TAKEN }}
           color: brightgreen
       - name: Run Playwright tests (1 worker)
         run: yarn pw:1
-      - name: Store time taken
-        id: store-time-taken
+      - name: Store time taken (1 worker)
+        id: store-time-taken-1w
         run: node read-test.js
       - uses: schneegans/dynamic-badges-action@v1.6.0
         with:
@@ -41,5 +41,5 @@ jobs:
           gistID: 6d4aa86c65259c0b1e1d61d644c88c84
           filename: pw-1.json
           label: Playwright (1 worker, w/o startup)
-          message: ${{ steps.store-time-taken.outputs.PLAYWRIGHT_TIME_TAKEN }}
+          message: ${{ steps.store-time-taken-1w.outputs.PLAYWRIGHT_TIME_TAKEN }}
           color: green
