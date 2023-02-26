@@ -25,7 +25,7 @@ With Playwright rising in popularity, how does it compare to Cypress which had a
 - Component tests
   - Both tools have ways to write component tests, but this is out of scope for this comparison (I have no intention to deviate from Vitest+RTL)
 
-![playwright](playwright-logo.svg) In my opinion, Playwright is the safer pick moving forward. It has more eyes watching it and has a respectable cadence.  
+![playwright](playwright-logo.svg) **In my opinion, Playwright is the safer pick moving forward.** It has more eyes watching it and has a respectable cadence.  
 The Cypress app had more time in the oven, but Playwright's VSCode extension is not far behind.
 
 ## Foreword: Comparison setup
@@ -62,7 +62,7 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
 | Playwright (6 workers, w/ startup)      | 6.9s         |
 | Playwright (6 workers, w/o startup)     | 6.3s         |
 
-![playwright](playwright-logo.svg) Playwright is the better option when writing tests locally
+![playwright](playwright-logo.svg) **Playwright is the better option when writing tests locally**
 
 ### CI Runs
 
@@ -76,7 +76,7 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-1.json)  
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/cy.json)
 
-![playwright](playwright-logo.svg) Unless you're a paying customer of Cypress Cloud, Playwright is the better option here (purely on the performance angle)
+![playwright](playwright-logo.svg) **Unless you're a paying customer of Cypress Cloud, Playwright is the better option here (purely on the performance angle)**
 
 ## API differences
 
@@ -123,7 +123,7 @@ const body2 = await response2.json();
 Promise chaining can get difficult to read quickly, even though you might not need to do this often in Cypress.  
 You also have to learn Cypress's APIs such as `its` & `wrap` instead of what you're used to in native Javascript.
 
-![playwright](playwright-logo.svg) If you are someone who typically writes async/await for your application code, then Playwright should appeal to you more.
+![playwright](playwright-logo.svg) **If you are someone who typically writes async/await for your application code, then Playwright should appeal to you more.**
 
 ### Query mechanism
 
@@ -181,13 +181,13 @@ My bigger issue with Cypress is the amount of APIs you have to clearly understan
 - Having to use [aliases](https://docs.cypress.io/guides/core-concepts/variables-and-aliases) to workaround network requests and other problems
 - `invoke` and documentations using jquery -->
 
-Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.
+**Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.**
 
 ### Assertions
 
 They both have their own quirks to learn and are fairly sound in my experience.
 
-No clear winner on this one.
+**No clear winner on this one.**
 
 ### Combating flake
 
@@ -205,7 +205,7 @@ Out of the box, Playwright has a couple more features that I think helps a lot:
 - You can wait for the page to emit `networkidle` [docs](https://playwright.dev/docs/test-assertions#retrying)
   - This is helpful especially coming from Cypress; I don't want to have to write `cy.wait` for every API call in the page
 
-![playwright](playwright-logo.svg) It is simply easier with Playwright
+![playwright](playwright-logo.svg) **It is simply easier with Playwright**
 
 ### Quick, miscellaneous comparisons
 
