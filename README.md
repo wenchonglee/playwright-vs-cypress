@@ -174,10 +174,12 @@ That is not to say Cypress is worse on all fronts, I do appreciate small quality
 - Traversing the DOM - `.siblings()`, `prev()`, `.next()`
 - Checking dropdown by value - `.check("value")`
 
+<!--
+
 My bigger issue with Cypress is the amount of APIs you have to clearly understand:
 
 - Having to use [aliases](https://docs.cypress.io/guides/core-concepts/variables-and-aliases) to workaround network requests and other problems
-- `invoke` and documentations using jquery
+- `invoke` and documentations using jquery -->
 
 Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.
 
@@ -187,23 +189,40 @@ They both have their own quirks to learn and are fairly sound in my experience.
 
 No clear winner on this one.
 
+### Combating flake
+
+A flaky test means it passes/fail inconsistently, often not because of your application.  
+The nature of end-to-end tests simply means there are more points of failure; e.g. network intermittence, conflicts in databases
+
+In my experience with Cypress, I almost always used `cy.wait()` to wait for network requests to complete.
+While this alone isn't enough to remove flake entirely, it helps decrease the likeliness of flake.
+
+Out of the box, Playwright has a couple more features that I think helps a lot:
+
+- You can manually encompass blocks of logic to retry, even with exponential backoff [docs](https://playwright.dev/docs/test-assertions#retrying)
+  - This is helpul when you're aware of flaky portions of your test but you're unable to directly fix that behavior
+  - You _cannot_ do this in Cypress, you'd have to rely on the entire test case retrying.
+- You can wait for the page to emit `networkidle` [docs](https://playwright.dev/docs/test-assertions#retrying)
+  - This is helpful especially coming from Cypress; I don't want to have to write `cy.wait` for every API call in the page
+
+![playwright](playwright-logo.svg) It is simply easier with Playwright
+
+### Quick, miscellaneous comparisons
+
+- Launching a server to test against
+  - Playwright has the ability to start dev server without 3rd party support [docs](https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests)
+  - Cypress requires modules such as `wait-on` or `start-server-and-test` [docs](https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-wait-for-my-application-to-load)
+- Testing multiple tabs
+  - Playwright has first class support [docs](https://playwright.dev/docs/pages#multiple-pages)
+  - Cypress claims it will never have multi-tab support [docs](https://docs.cypress.io/guides/references/trade-offs#Multiple-tabs)
+
 <!--
-Locator vs contains/get/find
-
-
-## Feature set
-
-### Waiting
-
 ### Plugins
 
 - collecting code coverage was easier with cypress
 
 ### feature set
 
-- wait for network
-- multiple browser, multiple tabs
-- start dev server
 - custom commands
 - having had to put arbitrary waits vs manual retries
 - cy.intercept can do both wait and modify together
