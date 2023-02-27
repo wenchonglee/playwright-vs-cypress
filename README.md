@@ -3,6 +3,14 @@
 Back around 2020, I chose to use Cypress for E2E tests and had a relatively good experience.  
 With Playwright rising in popularity, how does it compare to Cypress which had a head start?
 
+## TL;DR
+
+- Playwright is improving at a better cadence than Cypress did; some of Cypress decisions also favor their SaaS offering
+- Playwright is more performant than Cypress
+- Subjectively, I prefer Playwright in APIs and DX
+- There are a good number of features that Playwright has built-in, while you'd have to use plugins in Cypress
+
+
 ## General differences
 
 ![Star History Chart](./star-history.png)
@@ -15,13 +23,13 @@ With Playwright rising in popularity, how does it compare to Cypress which had a
   - Cypress's Webkit browser is still experimental
 - **Writing tests**
   - Playwright has a VSCode extension to facilitate development. You can easily run/debug tests within VSCode or use the Codegen tool to record tests
-  - The Cypress app can do the same, but also offer the ability to "time travel" back to specific test steps for debugging
+  - The Cypress app can do the same, but also offer the ability to ["time travel"](https://docs.cypress.io/guides/core-concepts/cypress-app#Time-traveling) back to specific test steps for debugging
     - In my experience however, the time travel ability is rarely useful
 - **Open source**
   - While both tools have an entity behind them, Cypress currently has vested interest in their SaaS Cypress Cloud
   - This slowed QoL features that could've existed in the base library
   - It has also in my opinion, stunted the development in the performance angle (running tests in parallel, sharding tests.. etc)
-  - A popular alternative is to use [Sorry Cypress](https://github.com/sorry-cypress/sorry-cypress), which can be self-hosted
+  - A popular open source alternative is to use [Sorry Cypress](https://github.com/sorry-cypress/sorry-cypress), which can be self-hosted
 - Component tests
   - Both tools have ways to write component tests, but this is out of scope for this comparison (I have no intention to deviate from Vitest+RTL)
 
@@ -72,12 +80,14 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
   - e.g. test-runner-1 takes 2 long tests, test-runner-2 takes 4 shorter tests
   - With the more naive approach in Playwright, it'll be cleanly divided where each runner take 3 tests
 
-**All 35 tests**  
+**All 35 tests on [Github Actions](https://github.com/wenchonglee/playwright-vs-cypress/actions)**  
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-6.json)  
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/pw-1.json)  
-![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/cy.json)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/wenchonglee/6d4aa86c65259c0b1e1d61d644c88c84/raw/cy.json)  
 
-![playwright](playwright-logo.svg) **Unless you're a paying customer of Cypress Cloud, Playwright is the better option here (purely on the performance angle)**
+It seems unfair without an example using Cypress Cloud, but note that a sharded example for Playwright is also missing. Since there is already a significant difference with only 35 tests, I didn't think it was necessary to invest effort into a sharded example.  
+
+![playwright](playwright-logo.svg) **Purely on a performance angle, Playwright is the better option. The only reason to consider Cypress is if you're a paying customer of Cypress Cloud and enjoy their SaaS features.**
 
 ## API differences
 
@@ -88,7 +98,8 @@ Beyond performance, there's also Developer Experience (DX). I'll compare these t
 Most of my JS/TS code are written with async/await but because of Cypress, I was somewhat used to promise chaining. 
 When I first tried Playwright, having to write `await` for almost every single command immediately felt like needless boilerplate code.
 
-After spending just a bit of time with Playwright however, it clicked for me and now I'm not sure if I can agree with the choice made by Cypress [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#Can-I-use-the-new-ES7-async--await-syntax) 
+After spending just a bit of time with Playwright however, it clicked for me.  
+Now, I'm not sure if I can agree with the choice made by Cypress [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#Can-I-use-the-new-ES7-async--await-syntax) 
 
 Consider the following example, a snippet from `network_requests`. We want to:
 1. Call an API
@@ -130,9 +141,9 @@ expect(response2.status()).toBe(201);
 ```
 
 Promise chaining can get difficult to read quickly, even though you might not need to do this often in Cypress.  
-You also have to learn Cypress's APIs such as `its` & `wrap`, instead of what you're used to in native Javascript.
+You'd also have to learn Cypress's APIs such as `its` & `wrap`, instead of just doing what you're used to in native Javascript.
 
-![playwright](playwright-logo.svg) **If you are someone who typically writes async/await for your application code, then Playwright should appeal to you more.**
+![playwright](playwright-logo.svg) **If you're someone who typically writes async/await for your application code, then Playwright should appeal to you more.**
 
 ### Query mechanism
 
@@ -171,7 +182,7 @@ const firstBtn = page
 ```
 
 Of course, this example is contrived because it is used to demonstrate their API. 
-The better way to achieve the same outcome is not to iterate through the table, but to find the content. This is a more resilient approach because the content is less likely to change, when you compare to using the order of the table content (what if it's sorted or filtered?). 
+The better way to achieve the same outcome is not to iterate through the table, but to find the content. This is a more resilient approach because the content is less likely to change. (what if the table is sorted or filtered?). 
 
 ```js
 // Cypress
@@ -181,8 +192,8 @@ cy.get("td").contains("Row 1: Cell 1").find("button").as("firstBtn");
 const firstButton = page.getByRole("cell", { name: "Row 1: Cell 1" }).getByRole("button");
 ```
 
-It might be subjective at this point, but using Playwright's APIs (`getByRole`, `getByLabel`) felt intuitive to me. 
-It didn't quite feel like I had to learn a new tool, as long as I understood the markup of my application. 
+It might be subjective at this point, but using Playwright's APIs ([`getByRole`](https://playwright.dev/docs/locators#locate-by-role), [`getByLabel`](https://playwright.dev/docs/locators#locate-by-label)) felt intuitive to me. 
+It didn't quite feel like I had to learn a new tool because I have a good understanding of the HTML markup of my application. 
 In a way, this is also true for reading tests. Comparing the two 1-liners, I am able to understand the intent of the line from Playwright slightly easier.
 
 This is not to say Cypress is worse on all fronts, I do appreciate small quality of life functions such as:
@@ -195,7 +206,7 @@ My bigger issue with Cypress is the amount of APIs you have to learn:
 - Having to use [aliases](https://docs.cypress.io/guides/core-concepts/variables-and-aliases) to workaround network requests and other problems
 - Cypress also comes with `jQuery`, and their examples for [`invoke`](https://docs.cypress.io/api/commands/invoke#jQuery-method) function is littered with jQuery usage. As a dev who has no `jQuery` experience, this is just another API I'll have to learn
 
-**Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.**
+**⚖ Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.**
 
 ### Assertions
 
@@ -229,7 +240,7 @@ They both have their own quirks to learn and are fairly sound in my experience.
   await expect(page.locator(".action-select-multiple")).toHaveValues(["fr-apples", "fr-oranges", "fr-bananas"]);
   ```
 
-**In my experience, I don't find one to be better than the other. Playwright might have lesser assertions but I've yet to find myself missing Cypress's assertion library; I've not once used `deep.equal` for example.**
+**⚖ In my experience, I don't find one to be better than the other. Playwright might have lesser assertions but I've yet to find myself missing Cypress's assertion library; I've not once used `deep.equal` for example.**
 
 ### Combating flake
 
@@ -265,3 +276,10 @@ Out of the box, [Playwright has the same API](https://playwright.dev/docs/api/cl
 - Custom commands
   - A redeeming feature I found easier to use in Cypress are custom commands
   - You can of course write reusable code as just functions, [Page Object Models](https://playwright.dev/docs/pom), etc. But Cypress's approach felt more intuitive so far
+
+## Conclusion
+
+It has been a while since Playwright reached feature parity with Cypress, and I would say they are even ahead of Cypress at this point (if you exclude component testing and other Cypress SaaS services). 
+
+If end-to-end testing is all you care about, then Playwright should be the obvious choice. 
+I'm apprehensive about Cypress's future because most of my wishlist have been there since day 1, and it is obvious they have a different priority compared to a non-paying customer like myself.
