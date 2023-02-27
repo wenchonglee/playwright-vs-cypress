@@ -169,8 +169,8 @@ const firstBtn = page
   .locator("button");
 ```
 
-Of course, this example is contrived because it is just an example to demonstrate their API. 
-The better way to achieve the same outcome is not to iterate through the table, but to find the content (which is unlikely to change). 
+Of course, this example is contrived because it is used to demonstrate their API. 
+The better way to achieve the same outcome is not to iterate through the table, but to find the content. This is a more resilient approach because the content is less likely to change, when you compare to using the order of the table content (what if it's sorted or filtered?). 
 
 ```js
 // Cypress
@@ -186,7 +186,7 @@ In a way, this is also true for reading tests. Comparing the two 1-liners, I am 
 
 This is not to say Cypress is worse on all fronts, I do appreciate small quality of life functions such as:
 
-- Traversing the DOM - `.siblings()`, `prev()`, `.next()`
+- Traversing the DOM - `.siblings()`, `.prev()`, `.next()`, `.parent()`
 - Checking dropdown by value - `.check("value")`
 
 My bigger issue with Cypress is the amount of APIs you have to learn:
@@ -242,8 +242,9 @@ Out of the box, [Playwright has the same API](https://playwright.dev/docs/api/cl
 
 - You can manually encompass blocks of logic to retry, even with exponential backoff [(reference)](https://playwright.dev/docs/test-assertions#retrying)
   - This is helpul when you're aware of flaky portions of your test but you're unable to directly fix that behavior
-  - You _cannot_ do this in Cypress, you'd have to rely on the entire test case retrying.
-- You can wait for the page to emit `networkidle` [(reference)](https://playwright.dev/docs/test-assertions#retrying)
+    - For example, an update to a resource separately causes it to be indexed into my search service. Since this service runs asynchronously to the update API, I cannot wait for the API response to assume it has been indexed. I used to set an arbitrary wait time with Cypress before running a search query, but manually retrying would be a much more resilient approach
+  - ~~You _cannot_ do this in Cypress, you'd have to rely on the entire test case retrying.~~ It seems this [new API](https://docs.cypress.io/api/cypress-api/custom-queries) in Cypress can retry to a certain degree, but it requires you to write a custom query
+- You can wait for the page to emit the `networkidle` event [(reference)](https://playwright.dev/docs/test-assertions#retrying)
   - This is helpful especially coming from Cypress; I don't want to have to write `cy.wait` for every API call in the page
 
 ![playwright](playwright-logo.svg) **It is simply easier with Playwright**
@@ -256,13 +257,10 @@ Out of the box, [Playwright has the same API](https://playwright.dev/docs/api/cl
 - Testing multiple tabs
   - Playwright has first class support [(reference)](https://playwright.dev/docs/pages#multiple-pages)
   - Cypress claims it will never have multi-tab support [(reference)](https://docs.cypress.io/guides/references/trade-offs#Multiple-tabs)
-
-<!--
-### Plugins
-- collecting code coverage was easier with cypress
-
-### feature set
-
-- custom commands
-- cy.intercept can do both wait and modify together
- -->
+- Plugins
+  - One of the things I dislike in Cypress is how some basic functionality is kept separately in plugins: [`networkIdle`](https://github.com/bahmutov/cypress-network-idle), [`wait-until`](https://github.com/NoriSte/cypress-wait-until), [`drag-and-drop`](https://github.com/4teamwork/cypress-drag-drop) (all of these are built into Playwright)
+  - Up until Cypress v9.3, you even had to use a plugin for uploading files: [cypress-file-upload](https://github.com/abramenal/cypress-file-upload)
+  - Is it better than Playwright, which has no plugin support? I'd say I have only used plugins that should have been built-in anyway
+- Custom commands
+  - A redeeming feature I found easier to use in Cypress are custom commands
+  - You can of course write reusable code as just functions, [Page Object Models](https://playwright.dev/docs/pom), etc. But Cypress's approach felt more intuitive so far
