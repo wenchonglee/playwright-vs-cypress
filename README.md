@@ -25,12 +25,13 @@ With Playwright rising in popularity, how does it compare to Cypress which had a
 - Component tests
   - Both tools have ways to write component tests, but this is out of scope for this comparison (I have no intention to deviate from Vitest+RTL)
 
-![playwright](playwright-logo.svg) **In my opinion, Playwright is the safer pick moving forward.** It has more eyes watching it and has a respectable cadence.  
+![playwright](playwright-logo.svg) **In my opinion, Playwright is the safer pick moving forward.** It has more eyes watching it and has a respectable cadence. 
 The Cypress app had more time in the oven, but Playwright's VSCode extension is not far behind.
 
 ## Foreword: Comparison setup
 
-In this repository, some of Cypress's [kitchen sink test suites](https://github.com/cypress-io/cypress-example-kitchensink/tree/master/cypress/e2e) were migrated to Playwright. _Even though they were written for Playwright, the titles were kept in sync for easy comparison._  
+In this repository, some of Cypress's [kitchen sink test suites](https://github.com/cypress-io/cypress-example-kitchensink/tree/master/cypress/e2e) were migrated to Playwright. Even though they were written for Playwright, the titles were kept in sync for easy comparison. 
+
 I'll use these selected test suites for discussion points:
 
 | Cypress                                                                    | Playwright                                                             |
@@ -41,7 +42,7 @@ I'll use these selected test suites for discussion points:
 | [cookies](cypress/e2e/2-advanced-examples/cookies.cy.js)                   | [cookies](tests/2-advanced-examples/cookies.spec.ts)                   |
 | [network_requests](cypress/e2e/2-advanced-examples/network_requests.cy.js) | [network_requests](tests/2-advanced-examples/network_requests.spec.ts) |
 
-Note that it is definitely **not** an apples-to-apples comparison, there are some minor differences that might give an edge to 1 tool over the other.  
+Note that it is definitely **not** an apples-to-apples comparison, there are some minor differences that might give an edge to 1 tool over the other. 
 I've tried to tweak it as much as possible to not affect the overall outcome of the test suites.
 
 ## Performance
@@ -80,15 +81,15 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
 
 ## API differences
 
-Beyond performance, there's also Developer Experience (DX).  
-I'll compare these tools comparable on a few select topics that I find important.
+Beyond performance, there's also Developer Experience (DX). I'll compare these tools on a few select topics that I find important.
 
 ### Async/await vs promise chaining
 
 Most of my JS/TS code are written with async/await but because of Cypress, I was somewhat used to promise chaining. 
 When I first tried Playwright, having to write `await` for almost every single command immediately felt like needless boilerplate code.
 
-After spending just a bit of time with Playwright however, it clicked for me and now I'm not sure if I can agree with the choice made by Cypress [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#Can-I-use-the-new-ES7-async--await-syntax)  
+After spending just a bit of time with Playwright however, it clicked for me and now I'm not sure if I can agree with the choice made by Cypress [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#Can-I-use-the-new-ES7-async--await-syntax) 
+
 Consider the following example, a snippet from `network_requests`. We want to:
 1. Call an API
 2. Use the response to call another API
