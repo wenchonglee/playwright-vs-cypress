@@ -80,15 +80,19 @@ I've tried to tweak it as much as possible to not affect the overall outcome of 
 
 ## API differences
 
-Beyond performance, are these tools comparable in their API and feature sets?  
-These are a select few topics that I find important.
+Beyond performance, there's also Developer Experience (DX).  
+I'll compare these tools comparable on a few select topics that I find important.
 
 ### Async/await vs promise chaining
 
-Coming from Cypress, I was somewhat used to promise chaining. Having to write `await` for every command in Playwright immediately felt like needless boilerplate code.
+Most of my JS/TS code are written with async/await but because of Cypress, I was somewhat used to promise chaining. 
+When I first tried Playwright, having to write `await` for almost every single command immediately felt like needless boilerplate code.
 
-After spending just a bit of time with Playwright however, it made a lot of sense to me.  
-Consider the following example, a snippet from `network_requests`:
+After spending just a bit of time with Playwright however, it clicked for me and now I'm not sure if I can agree with the choice made by Cypress [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#Can-I-use-the-new-ES7-async--await-syntax)  
+Consider the following example, a snippet from `network_requests`. We want to:
+1. Call an API
+2. Use the response to call another API
+3. Run an assertion on the response of the 2nd API 
 
 ```js
 // Cypress
@@ -97,11 +101,13 @@ cy.request("https://jsonplaceholder.cypress.io/users?_limit=1")
   .its("0")
   .then((user) => {
     cy.request("POST", "https://jsonplaceholder.cypress.io/posts", {
-      // redacted
+      userId: user.id,
+      // ...redacted
     });
   })
   .then((response) => {
-    // redacted
+    expect(response).property('status').to.equal(201)
+    // ...redacted
   });
 ```
 
@@ -113,15 +119,17 @@ const user = body[0];
 
 const response2 = await request.post("https://jsonplaceholder.cypress.io/posts", {
   data: {
-    // redacted
+    userId: user.id,
+    // ...redacted
   },
 });
 const body2 = await response2.json();
-// redacted
+expect(response2.status()).toBe(201);
+// ...redacted
 ```
 
 Promise chaining can get difficult to read quickly, even though you might not need to do this often in Cypress.  
-You also have to learn Cypress's APIs such as `its` & `wrap` instead of what you're used to in native Javascript.
+You also have to learn Cypress's APIs such as `its` & `wrap`, instead of what you're used to in native Javascript.
 
 ![playwright](playwright-logo.svg) **If you are someone who typically writes async/await for your application code, then Playwright should appeal to you more.**
 
@@ -130,7 +138,11 @@ You also have to learn Cypress's APIs such as `its` & `wrap` instead of what you
 In my experience, both tools have the means to locate/query anything you need.  
 The point of contention is how intuitive or how difficult is it to use.
 
-Consider the following, a snippet from `aliasing`:
+Consider the following, a snippet from `aliasing`. We want to:
+1. Get the table by class name
+2. Find the first row
+3. Find the first cell of the first row
+4. Find the button in the first cell
 
 <!-- prettier-ignore -->
 ```js
@@ -157,7 +169,8 @@ const firstBtn = page
   .locator("button");
 ```
 
-In my opinion however, the better way to write this snippet with both tools is:
+Of course, this example is contrived because it is just an example to demonstrate their API. 
+The better way to achieve the same outcome is not to iterate through the table, but to find the content (which is unlikely to change). 
 
 ```js
 // Cypress
@@ -167,19 +180,19 @@ cy.get("td").contains("Row 1: Cell 1").find("button").as("firstBtn");
 const firstButton = page.getByRole("cell", { name: "Row 1: Cell 1" }).getByRole("button");
 ```
 
-It might be subjective at this point, but using Playwright so far didn't feel like I had to learn a new tool, the ideas behind `getByRole`, `getByLabel`, ..etc felt intuitive to me. This is also true for reading tests, I am able to understand the intention of the test slightly easier.
+It might be subjective at this point, but using Playwright's APIs (`getByRole`, `getByLabel`) felt intuitive to me. 
+It didn't quite feel like I had to learn a new tool, as long as I understood the markup of my application. 
+In a way, this is also true for reading tests. Comparing the two 1-liners, I am able to understand the intent of the line from Playwright slightly easier.
 
-That is not to say Cypress is worse on all fronts, I do appreciate small quality of life functions such as:
+This is not to say Cypress is worse on all fronts, I do appreciate small quality of life functions such as:
 
 - Traversing the DOM - `.siblings()`, `prev()`, `.next()`
 - Checking dropdown by value - `.check("value")`
 
-<!--
-
-My bigger issue with Cypress is the amount of APIs you have to clearly understand:
+My bigger issue with Cypress is the amount of APIs you have to learn:
 
 - Having to use [aliases](https://docs.cypress.io/guides/core-concepts/variables-and-aliases) to workaround network requests and other problems
-- `invoke` and documentations using jquery -->
+- Cypress also comes with `jQuery`, and their examples for [`invoke`](https://docs.cypress.io/api/commands/invoke#jQuery-method) function is littered with jQuery usage. As a dev who has no `jQuery` experience, this is just another API I'll have to learn
 
 **Right now, I cannot objectively say Playwright is better, but I do enjoy writing tests in Playwright more.**
 
@@ -187,22 +200,50 @@ My bigger issue with Cypress is the amount of APIs you have to clearly understan
 
 They both have their own quirks to learn and are fairly sound in my experience.
 
-**No clear winner on this one.**
+- Example where there's little difference
+  ```js
+  // Cypress
+  expect(response).property('body').to.contain({ title: 'Cypress Test Runner' })
+
+  // Playwright
+  expect(body).toHaveProperty("title", "Cypress Test Runner");
+  ```
+- Playwright has lesser "helpers" example 1
+  ```js
+  // Cypress
+  expect(user).property('id').to.be.a('number')
+  
+  // Playwright
+  expect(typeof user.id).toBe("number")
+  ```
+- Playwright has lesser "helpers" example 2
+  ```js
+  // Cypress
+  cy.get('.action-select-multiple')
+    .select(['fr-apples', 'fr-oranges', 'fr-bananas'])
+    .invoke('val')
+    .should('deep.equal', ['fr-apples', 'fr-oranges', 'fr-bananas'])
+
+  // Playwright
+  await expect(page.locator(".action-select-multiple")).toHaveValues(["fr-apples", "fr-oranges", "fr-bananas"]);
+  ```
+
+**In my experience, I don't find one to be better than the other. Playwright might have lesser assertions but I've yet to find myself missing Cypress's assertion library; I've not once used `deep.equal` for example.**
 
 ### Combating flake
 
-A flaky test means it passes/fail inconsistently, often not because of your application.  
+A flaky test means it passes/fails inconsistently, often not because of the application you're testing.  
 The nature of end-to-end tests simply means there are more points of failure; e.g. network intermittence, conflicts in databases
 
 In my experience with Cypress, I almost always used `cy.wait()` to wait for network requests to complete.
 While this alone isn't enough to remove flake entirely, it helps decrease the likeliness of flake.
 
-Out of the box, Playwright has a couple more features that I think helps a lot:
+Out of the box, [Playwright has the same API](https://playwright.dev/docs/api/class-page#page-wait-for-response) and a couple more features that I think helps a lot:
 
-- You can manually encompass blocks of logic to retry, even with exponential backoff [docs](https://playwright.dev/docs/test-assertions#retrying)
+- You can manually encompass blocks of logic to retry, even with exponential backoff [(reference)](https://playwright.dev/docs/test-assertions#retrying)
   - This is helpul when you're aware of flaky portions of your test but you're unable to directly fix that behavior
   - You _cannot_ do this in Cypress, you'd have to rely on the entire test case retrying.
-- You can wait for the page to emit `networkidle` [docs](https://playwright.dev/docs/test-assertions#retrying)
+- You can wait for the page to emit `networkidle` [(reference)](https://playwright.dev/docs/test-assertions#retrying)
   - This is helpful especially coming from Cypress; I don't want to have to write `cy.wait` for every API call in the page
 
 ![playwright](playwright-logo.svg) **It is simply easier with Playwright**
@@ -210,20 +251,18 @@ Out of the box, Playwright has a couple more features that I think helps a lot:
 ### Quick, miscellaneous comparisons
 
 - Launching a server to test against
-  - Playwright has the ability to start dev server without 3rd party support [docs](https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests)
-  - Cypress requires modules such as `wait-on` or `start-server-and-test` [docs](https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-wait-for-my-application-to-load)
+  - Playwright has the ability to start dev server without 3rd party support [(reference)](https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests)
+  - Cypress requires modules such as `wait-on` or `start-server-and-test` [(reference)](https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-wait-for-my-application-to-load)
 - Testing multiple tabs
-  - Playwright has first class support [docs](https://playwright.dev/docs/pages#multiple-pages)
-  - Cypress claims it will never have multi-tab support [docs](https://docs.cypress.io/guides/references/trade-offs#Multiple-tabs)
+  - Playwright has first class support [(reference)](https://playwright.dev/docs/pages#multiple-pages)
+  - Cypress claims it will never have multi-tab support [(reference)](https://docs.cypress.io/guides/references/trade-offs#Multiple-tabs)
 
 <!--
 ### Plugins
-
 - collecting code coverage was easier with cypress
 
 ### feature set
 
 - custom commands
-- having had to put arbitrary waits vs manual retries
 - cy.intercept can do both wait and modify together
  -->
